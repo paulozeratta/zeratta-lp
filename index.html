@@ -154,14 +154,6 @@
   .hero .tagline{font-family:var(--serif);font-weight:300;
     font-size:clamp(1.05rem,2.2vw,1.6rem);color:var(--ink-700);line-height:1.5;letter-spacing:-0.01em;
     margin-top:clamp(1.6rem,3.4vh,2.6rem);max-width:30ch}
-  .cta{position:relative;display:inline-flex;align-items:center;gap:.9rem;margin-top:clamp(2.4rem,5vh,3.6rem);
-    font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-900);cursor:none;
-    padding-bottom:.7rem}
-  .cta .ln{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink-900);transform-origin:left;
-    transition:transform .6s var(--ease)}
-  .cta .ar{transition:transform .5s var(--ease)}
-  .cta:hover .ln{transform:scaleX(.0);transform-origin:right}
-  .cta:hover .ar{transform:translateX(6px)}
   .scrollcue{position:absolute;left:50%;bottom:clamp(1.8rem,4vh,2.8rem);transform:translateX(-50%);z-index:2;
     display:flex;flex-direction:column;align-items:center;gap:.85rem;color:var(--muted)}
   .scrollcue .num{font-family:var(--serif);font-size:.95rem}
@@ -283,8 +275,6 @@
   .coming .sub{margin-top:1.8rem;color:rgba(244,241,234,.62);font-size:.95rem;letter-spacing:.04em}
   .coming .eyebrow{color:rgba(244,241,234,.72)}
   .coming .eyebrow::before{background:var(--bone);opacity:.55}
-  .coming .cta{color:var(--bone)}
-  .coming .cta .ln{background:var(--bone)}
 
   /* ---------- Footer ---------- */
   footer.site{padding:clamp(3.5rem,7vh,6rem) var(--gutter) clamp(2.2rem,4vh,3rem);
@@ -384,11 +374,6 @@
       <span class="eyebrow reveal" data-i18n="hero.eyebrow">Pré-lançamento</span>
       <h1 class="wordmark mask"><span>ZERATTA</span></h1>
       <p class="tagline reveal" data-i18n="hero.tagline">A excelência não nasce pronta.<br>Ela é construída.</p>
-      <a class="cta reveal" id="ctaHero" href="mailto:sac@zeratta.com?subject=Quero%20ser%20avisado%20no%20lan%C3%A7amento%20ZERATTA" data-cursor>
-        <span data-i18n="hero.cta">Seja avisado no lançamento</span>
-        <span class="ar">→</span>
-        <span class="ln"></span>
-      </a>
     </div>
     <div class="scrollcue">
       <span class="num">01</span>
@@ -491,11 +476,6 @@
       <span class="eyebrow reveal" style="justify-content:center" data-i18n="coming.eyebrow">Em breve</span>
       <p class="lede reveal" style="margin-top:1.8rem" data-i18n="coming.lede">Estamos preparando algo extraordinário.</p>
       <p class="sub reveal" data-i18n="coming.sub">O lançamento se aproxima.</p>
-      <a class="cta reveal" style="margin-top:2.8rem" href="mailto:sac@zeratta.com?subject=Quero%20ser%20avisado%20no%20lan%C3%A7amento%20ZERATTA" data-cursor>
-        <span data-i18n="coming.cta">Seja avisado no lançamento</span>
-        <span class="ar">→</span>
-        <span class="ln"></span>
-      </a>
     </div>
   </section>
 
@@ -539,7 +519,7 @@
       "alt.unit":"metros","alt.short":"altitude",
       "hero.eyebrow":"Pré-lançamento",
       "hero.tagline":"A excelência não nasce pronta.<br>Ela é construída.",
-      "hero.cta":"Seja avisado no lançamento","hero.scroll":"role para subir",
+      "hero.scroll":"role para subir",
       "phil.eyebrow":"Filosofia",
       "phil.lede":"O alto não se alcança por acaso. Alcança-se <em>por decisão</em>.",
       "phil.p1":"ZERATTA nasce de uma convicção simples: cada detalhe é uma escolha, e cada escolha, um passo acima. Não perseguimos o brilho fácil. Perseguimos a permanência.",
@@ -558,7 +538,7 @@
       "gallery.eyebrow":"Fragmentos","gallery.lede":"O universo ZERATTA, em fragmentos.",
       "gc1":"O homem","gc2":"A altitude","gc3":"O ofício","gc4":"O convite","gc5":"O voo","gc6":"O ritual","gc7":"O presente","gc8":"O traje","gc9":"A coleção","gc10":"A gala",
       "coming.eyebrow":"Em breve","coming.lede":"Estamos preparando algo extraordinário.",
-      "coming.sub":"O lançamento se aproxima.","coming.cta":"Seja avisado no lançamento",
+      "coming.sub":"O lançamento se aproxima.",
       "footer.tag":"Voe alto.","footer.rights":"© 2026 ZERATTA. Todos os direitos reservados.",
       "footer.place":"Construído nas alturas"
     },
@@ -566,7 +546,7 @@
       "alt.unit":"meters","alt.short":"altitude",
       "hero.eyebrow":"Pre-launch",
       "hero.tagline":"Excellence is never accidental.<br>It is built.",
-      "hero.cta":"Be notified at launch","hero.scroll":"scroll to ascend",
+      "hero.scroll":"scroll to ascend",
       "phil.eyebrow":"Philosophy",
       "phil.lede":"Altitude is never reached by chance. It is reached <em>by decision</em>.",
       "phil.p1":"ZERATTA begins from a simple conviction: every detail is a choice, and every choice a step higher. We do not chase easy shine. We pursue permanence.",
@@ -585,7 +565,7 @@
       "gallery.eyebrow":"Fragments","gallery.lede":"The ZERATTA universe, in fragments.",
       "gc1":"The man","gc2":"The altitude","gc3":"The craft","gc4":"The invitation","gc5":"The flight","gc6":"The ritual","gc7":"The gift","gc8":"The attire","gc9":"The collection","gc10":"The gala",
       "coming.eyebrow":"Coming soon","coming.lede":"We are preparing something extraordinary.",
-      "coming.sub":"The launch approaches.","coming.cta":"Be notified at launch",
+      "coming.sub":"The launch approaches.",
       "footer.tag":"Fly high.","footer.rights":"© 2026 ZERATTA. All rights reserved.",
       "footer.place":"Built at altitude"
     }
