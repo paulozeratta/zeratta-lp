@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZERATTA · Pré-lançamento</title>
+<meta name="description" content="ZERATTA, uma marca em ascensão. A excelência não nasce pronta. Ela é construída." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta name="theme-color" content="#FFFFFF" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://use.typekit.net/fap5hfm.css" />
+<style>
+  /* ============================================================
+     ZERATTA — "A Altitude" · light theme preview
+     Tokens, base, layout, sections, motion
+     ============================================================ */
+  :root{
+    --paper:#FFFFFF;
+    --paper-ground:#F6F5F2;
+    --surface:#EFEDE8;
+    --line:#E2E0DA;
+    --ink-900:#0E0E0E;
+    --ink-700:#1A1A1A;
+    --muted:#6E6B64;
+    --bordeaux:#6A1726;
+    --bordeaux-deep:#2D0707;
+    --gold:#B2954E;
+    --gold-soft:#C6B06E;
+    --bone:#F4F1EA;
+
+    /* Geist throughout — names kept for minimal churn; both point to Geist */
+    --serif:"Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --sans:"Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --display-hero:"quiverleaf-cf", Georgia, serif;
+
+    --ease:cubic-bezier(0.22,1,0.36,1);
+    --gutter:clamp(1.5rem,6vw,6rem);
+    --maxw:1320px;
+    --rail:64px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);
+    color:var(--ink-900);
+    background:
+      linear-gradient(180deg,
+        var(--paper-ground) 0%,
+        #FAF9F6 22%,
+        var(--paper) 48%,
+        var(--paper) 100%);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    cursor:none;
+  }
+  @media (pointer:coarse){ body{cursor:auto} }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  ::selection{background:var(--bordeaux);color:#fff}
+
+  /* ---------- Paper grain overlay ---------- */
+  .grain{
+    position:fixed;inset:0;z-index:9000;pointer-events:none;
+    mix-blend-mode:multiply;opacity:.045;
+  }
+
+  /* ---------- Custom cursor ---------- */
+  .cursor,.cursor-dot{position:fixed;top:0;left:0;z-index:9500;pointer-events:none;border-radius:50%;
+    transform:translate(-50%,-50%);will-change:transform}
+  .cursor{width:34px;height:34px;border:1px solid rgba(14,14,14,.35);
+    transition:width .35s var(--ease),height .35s var(--ease),border-color .35s var(--ease),background-color .35s var(--ease)}
+  .cursor-dot{width:4px;height:4px;background:var(--ink-900)}
+  .cursor.is-hover{width:62px;height:62px;border-color:var(--gold);background:rgba(168,134,75,.06)}
+  @media (pointer:coarse){ .cursor,.cursor-dot{display:none} }
+
+  /* ---------- Header ---------- */
+  header.site{
+    position:fixed;top:0;left:0;right:0;z-index:8000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:clamp(1.1rem,2.4vw,1.8rem) var(--gutter);
+    mix-blend-mode:normal;
+  }
+  .brandmark{display:inline-flex;align-items:center;line-height:0}
+  .brand-logo{height:56px;width:auto;display:block}
+  .brand-logo path{fill:var(--ink-900);transition:fill .5s var(--ease)}
+  .brandmark:hover .brand-logo{opacity:.62}
+  .brand-logo{transition:opacity .45s var(--ease)}
+  @media (max-width:560px){ .brand-logo{height:46px} }
+  .lang{display:flex;align-items:center;gap:.1rem;font-size:.72rem;letter-spacing:.18em}
+  .lang button{font:inherit;letter-spacing:inherit;background:none;border:0;cursor:none;
+    color:var(--muted);padding:.35rem .5rem;position:relative;transition:color .4s var(--ease)}
+  .lang button .u{position:absolute;left:.5rem;right:.5rem;bottom:.15rem;height:1px;background:var(--gold);
+    transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+  .lang button.active{color:var(--ink-900)}
+  .lang button.active .u{transform:scaleX(1)}
+  .lang .sep{color:var(--line)}
+
+  /* ---------- Altimeter rail ---------- */
+  .altimeter{
+    position:fixed;top:0;right:0;height:100vh;width:var(--rail);z-index:7000;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    pointer-events:none;
+  }
+  .altimeter .track{position:absolute;top:16vh;bottom:16vh;width:1px;background:var(--line)}
+  .altimeter .fill{position:absolute;top:16vh;left:50%;width:1px;height:0;background:var(--gold);
+    transform:translateX(-50%);transition:height .12s linear}
+  .altimeter .tick{position:absolute;left:50%;width:8px;height:1px;background:var(--line);
+    transform:translateX(-50%);pointer-events:auto;cursor:none}
+  .altimeter .tick.on{background:var(--ink-900);width:14px}
+  .altimeter .readout{position:absolute;right:calc(var(--rail) - 6px);top:50%;transform:translateY(-50%);
+    text-align:right;white-space:nowrap}
+  .altimeter .alt-val{font-family:var(--serif);font-size:1.35rem;color:var(--ink-900);line-height:1;font-variant-numeric:tabular-nums}
+  .altimeter .alt-unit{font-size:.6rem;letter-spacing:.32em;color:var(--muted);margin-top:.4rem;text-transform:uppercase}
+  @media (max-width:860px){ .altimeter{display:none} }
+
+  /* ---------- Layout primitives ---------- */
+  .section{position:relative;padding:clamp(7rem,15vh,13rem) var(--gutter)}
+  .wrap{max-width:var(--maxw);margin:0 auto;width:100%}
+  .eyebrow{font-size:.68rem;letter-spacing:.34em;color:var(--gold);text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:.8rem}
+  .eyebrow::before{content:"";width:34px;height:1px;background:var(--gold);display:inline-block;opacity:.6}
+  .lede{font-family:var(--serif);font-weight:300;line-height:1.14;color:var(--ink-900);letter-spacing:-0.018em}
+  .body{font-weight:300;line-height:1.75;color:var(--muted);max-width:46ch}
+
+  /* ---------- Reveal ---------- */
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 1.1s var(--ease),transform 1.1s var(--ease)}
+  .reveal.in{opacity:1;transform:none}
+  .mask{display:block;overflow:hidden}
+  .mask>span{display:block;transform:translateY(112%);transition:transform 1.05s var(--ease)}
+  .mask.in>span{transform:none}
+
+  /* ---------- Hero ---------- */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;position:relative;padding-inline:var(--gutter);overflow:hidden}
+  .hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+  .hero .atmos{position:absolute;inset:0;z-index:0;
+    background:
+      radial-gradient(58% 48% at 50% 38%, rgba(178,149,78,.08), transparent 70%),
+      radial-gradient(48% 44% at 80% 16%, rgba(73,16,25,.10), transparent 70%),
+      radial-gradient(52% 50% at 16% 86%, rgba(73,16,25,.07), transparent 72%),
+      radial-gradient(70% 60% at 30% 60%, rgba(14,14,14,.035), transparent 70%);}
+  .hero .vignette{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 42%, transparent 55%, rgba(14,14,14,.05))}
+  .hero .inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
+  .hero .eyebrow{margin-bottom:clamp(2rem,5vh,3.4rem)}
+  .wordmark{font-family:var(--display-hero,var(--serif));font-weight:700;line-height:.96;
+    font-size:clamp(3rem,14vw,11rem);letter-spacing:0;color:var(--ink-900)}
+  .hero .tagline{font-family:var(--serif);font-weight:300;
+    font-size:clamp(1.05rem,2.2vw,1.6rem);color:var(--ink-700);line-height:1.5;letter-spacing:-0.01em;
+    margin-top:clamp(1.6rem,3.4vh,2.6rem);max-width:30ch}
+  .cta{position:relative;display:inline-flex;align-items:center;gap:.9rem;margin-top:clamp(2.4rem,5vh,3.6rem);
+    font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-900);cursor:none;
+    padding-bottom:.7rem}
+  .cta .ln{position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--ink-900);transform-origin:left;
+    transition:transform .6s var(--ease)}
+  .cta .ar{transition:transform .5s var(--ease)}
+  .cta:hover .ln{transform:scaleX(.0);transform-origin:right}
+  .cta:hover .ar{transform:translateX(6px)}
+  .scrollcue{position:absolute;left:50%;bottom:clamp(1.8rem,4vh,2.8rem);transform:translateX(-50%);z-index:2;
+    display:flex;flex-direction:column;align-items:center;gap:.85rem;color:var(--muted)}
+  .scrollcue .num{font-family:var(--serif);font-size:.95rem}
+  .scrollcue .line{width:1px;height:54px;background:linear-gradient(var(--ink-900),transparent);position:relative;overflow:hidden}
+  .scrollcue .line::after{content:"";position:absolute;top:-40%;left:0;width:1px;height:40%;background:var(--gold);
+    animation:drop 2.6s var(--ease) infinite}
+  .scrollcue .txt{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase}
+  @keyframes drop{0%{top:-40%}60%,100%{top:100%}}
+
+  /* ---------- Brand statement ---------- */
+  .statement .grid{display:grid;grid-template-columns:1fr;gap:clamp(2rem,5vw,4rem)}
+  .statement .lede{font-size:clamp(1.7rem,4.4vw,3.6rem);max-width:18ch}
+  .statement .col-b{display:flex;flex-direction:column;gap:1.6rem;padding-top:.6rem}
+  @media (min-width:880px){
+    .statement .grid{grid-template-columns:1.15fr .85fr;align-items:start}
+    .statement .col-b{padding-top:clamp(2rem,6vw,5rem)}
+  }
+  .statement .lede em{font-style:normal;font-weight:400;color:var(--bordeaux)}
+
+  /* ---------- Eagle ---------- */
+  .eagle{text-align:center;overflow:hidden}
+  .eagle .halo{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+    width:min(80vw,760px);height:min(80vw,760px);z-index:0;pointer-events:none;
+    background:
+      radial-gradient(closest-side at 50% 42%, rgba(178,149,78,.12), transparent 70%),
+      radial-gradient(closest-side at 50% 64%, rgba(73,16,25,.11), transparent 72%)}
+  .eagle .wrap{position:relative;z-index:1}
+  .eagle .eyebrow{margin-bottom:clamp(2.4rem,5vh,3.4rem)}
+  .eagle svg{width:min(56vw,300px);height:auto;margin:0 auto;display:block}
+  /* draw-on: JS traces each shape's outline (stroke), then the fill fades in */
+  #eagleSvg path{
+    fill:transparent;
+    stroke:var(--ink-900);stroke-width:11;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .eagle.in #eagleSvg path{fill:var(--ink-900)}
+  .eagle.in #eagleSvg{animation:soar 7.5s ease-in-out 4.2s infinite}
+  @keyframes soar{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .eagle .lead{font-family:var(--serif);font-weight:300;font-size:clamp(1.2rem,2.8vw,1.9rem);
+    color:var(--ink-700);max-width:26ch;margin:clamp(2.4rem,5vh,3.6rem) auto 0;line-height:1.45;letter-spacing:-0.01em}
+  .traits{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(1.6rem,4vw,3rem);
+    max-width:760px;margin:clamp(3.4rem,7vh,5.5rem) auto 0;text-align:left}
+  @media (min-width:760px){ .traits{grid-template-columns:repeat(4,1fr)} }
+  .trait .t-n{font-size:.62rem;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
+  .trait .t-t{font-family:var(--serif);font-size:1.5rem;margin:.55rem 0 .45rem;color:var(--ink-900)}
+  .trait .t-d{font-size:.84rem;font-weight:300;color:var(--muted);line-height:1.6}
+  .trait{padding-top:1.1rem;border-top:1px solid var(--line)}
+
+  /* ---------- Journey ---------- */
+  .journey .eyebrow{margin-bottom:clamp(3rem,6vh,4.5rem)}
+  .steps{display:flex;flex-direction:column}
+  .step{display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,3.4rem);
+    padding:clamp(1.8rem,4vh,3rem) 0;border-top:1px solid var(--line);position:relative}
+  .step:last-child{border-bottom:1px solid var(--line)}
+  .step .s-alt{font-family:var(--serif);font-size:clamp(1.1rem,2vw,1.4rem);color:var(--gold);
+    font-variant-numeric:tabular-nums;white-space:nowrap;min-width:5.5rem}
+  .step .s-alt small{display:block;font-family:var(--sans);font-size:.58rem;letter-spacing:.26em;
+    color:var(--muted);text-transform:uppercase;margin-top:.5rem}
+  .step .s-main{display:flex;flex-direction:column;gap:.7rem}
+  .step .s-i{font-size:.66rem;letter-spacing:.28em;color:var(--muted);text-transform:uppercase}
+  .step .s-t{font-family:var(--serif);font-weight:400;font-size:clamp(1.6rem,3.6vw,2.7rem);color:var(--ink-900);line-height:1.05;letter-spacing:-0.018em}
+  .step .s-d{font-weight:300;color:var(--muted);max-width:40ch;line-height:1.7}
+  .step:hover .s-t{color:var(--bordeaux)}
+  .step .s-t{transition:color .5s var(--ease)}
+
+  /* ---------- Gallery ---------- */
+  .gallery .head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.4rem;
+    margin-bottom:clamp(2.6rem,5vh,4rem)}
+  .gallery .head .lede{font-size:clamp(1.5rem,3.4vw,2.6rem);max-width:16ch}
+  .gal-grid{column-count:3;column-gap:clamp(.7rem,1.4vw,1.1rem)}
+  @media (max-width:900px){ .gal-grid{column-count:2} }
+  @media (max-width:560px){ .gal-grid{column-count:1} }
+  .g-item{display:block;width:100%;padding:0;border:0;cursor:none;
+    margin:0 0 clamp(.7rem,1.4vw,1.1rem);position:relative;overflow:hidden;background:var(--surface);
+    break-inside:avoid;-webkit-column-break-inside:avoid}
+  .g-item img{width:100%;height:auto;display:block;filter:saturate(.97);
+    transition:transform 1.2s var(--ease),filter 1.2s var(--ease)}
+  .g-item:hover img{transform:scale(1.05);filter:saturate(1.06)}
+  .g-item::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(to top, rgba(45,7,7,.55), transparent 42%);
+    opacity:0;transition:opacity .6s var(--ease)}
+  .g-item:hover::after{opacity:1}
+  .g-cap{position:absolute;left:1.1rem;bottom:1rem;z-index:2;font-size:.58rem;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--bone);opacity:0;transform:translateY(6px);
+    transition:opacity .55s var(--ease),transform .55s var(--ease);pointer-events:none}
+  .g-item:hover .g-cap{opacity:1;transform:none}
+  @media (hover:none){ .g-cap{opacity:.92;transform:none} .g-item::after{opacity:.6} }
+  .gallery .g-item:nth-child(2){transition-delay:.05s}
+  .gallery .g-item:nth-child(3){transition-delay:.10s}
+  .gallery .g-item:nth-child(4){transition-delay:.15s}
+  .gallery .g-item:nth-child(5){transition-delay:.08s}
+  .gallery .g-item:nth-child(6){transition-delay:.13s}
+  .gallery .g-item:nth-child(7){transition-delay:.18s}
+  .gallery .g-item:nth-child(8){transition-delay:.10s}
+  .gallery .g-item:nth-child(9){transition-delay:.16s}
+  .gallery .g-item:nth-child(10){transition-delay:.20s}
+
+  /* ---------- Lightbox ---------- */
+  .lightbox{position:fixed;inset:0;z-index:9700;display:flex;align-items:center;justify-content:center;
+    background:rgba(20,6,6,0);opacity:0;pointer-events:none;
+    transition:opacity .5s var(--ease),background-color .5s var(--ease)}
+  .lightbox.open{opacity:1;pointer-events:auto;background:rgba(20,6,6,.95)}
+  .lb-img{max-width:88vw;max-height:86vh;object-fit:contain;box-shadow:0 30px 90px rgba(0,0,0,.55);
+    transform:scale(.96);transition:transform .55s var(--ease)}
+  .lightbox.open .lb-img{transform:none}
+  .lb-close{position:fixed;top:1.3rem;right:1.7rem;background:none;border:0;color:var(--bone);
+    font:300 2rem/1 var(--sans);cursor:none;opacity:.7;transition:opacity .3s var(--ease);z-index:2}
+  .lb-close:hover{opacity:1}
+  .lb-nav{position:fixed;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--bone);
+    font:300 2.4rem/1 var(--sans);cursor:none;opacity:.5;transition:opacity .3s var(--ease);padding:1rem;z-index:2}
+  .lb-nav:hover{opacity:1}
+  .lb-prev{left:1rem} .lb-next{right:1rem}
+  @media (pointer:coarse){ .lb-close,.lb-nav{cursor:auto} }
+
+  /* ---------- Coming soon ---------- */
+  .coming{text-align:center;position:relative;overflow:hidden;background:var(--bordeaux-deep)}
+  .coming .atmos{display:none}
+  .coming .wrap{position:relative;z-index:1}
+  .coming .lede{font-size:clamp(2rem,6vw,5rem);max-width:14ch;margin:0 auto;line-height:1.08;color:var(--bone)}
+  .coming .sub{margin-top:1.8rem;color:rgba(244,241,234,.62);font-size:.95rem;letter-spacing:.04em}
+  .coming .eyebrow{color:rgba(244,241,234,.72)}
+  .coming .eyebrow::before{background:var(--bone);opacity:.55}
+  .coming .cta{color:var(--bone)}
+  .coming .cta .ln{background:var(--bone)}
+
+  /* ---------- Footer ---------- */
+  footer.site{padding:clamp(3.5rem,7vh,6rem) var(--gutter) clamp(2.2rem,4vh,3rem);
+    border-top:1px solid var(--line);background:var(--paper)}
+  .foot-grid{max-width:var(--maxw);margin:0 auto;display:flex;flex-wrap:wrap;gap:2rem;
+    align-items:flex-end;justify-content:space-between}
+  .foot-mark{font-family:var(--serif);font-weight:500;letter-spacing:.4em;font-size:1.4rem;padding-left:.4em}
+  .foot-tag{font-family:var(--serif);font-weight:400;color:var(--bordeaux);margin-top:.7rem;font-size:1.05rem}
+  .foot-links{display:flex;gap:2rem;flex-wrap:wrap;font-size:.74rem;letter-spacing:.14em;color:var(--muted)}
+  .foot-links a{position:relative;transition:color .4s var(--ease)}
+  .foot-links a:hover{color:var(--ink-900)}
+  .foot-base{max-width:var(--maxw);margin:clamp(2.5rem,5vh,4rem) auto 0;display:flex;justify-content:space-between;
+    flex-wrap:wrap;gap:1rem;font-size:.64rem;letter-spacing:.18em;color:var(--muted);text-transform:uppercase}
+
+  /* ---------- Inversion over the dark (bordeaux) section ---------- */
+  .altimeter .track,.altimeter .alt-val,.altimeter .alt-unit,
+  .lang button,.lang .sep{transition:color .5s var(--ease),background-color .5s var(--ease)}
+  body.over-dark-head .brand-logo path{fill:var(--bone)}
+  body.over-dark-head .lang button{color:rgba(244,241,234,.55)}
+  body.over-dark-head .lang button.active{color:var(--bone)}
+  body.over-dark-head .lang button.active .u{background:var(--bone)}
+  body.over-dark-head .lang .sep{color:rgba(244,241,234,.25)}
+  body.over-dark .altimeter .track{background:rgba(244,241,234,.22)}
+  body.over-dark .altimeter .fill{background:var(--bone)}
+  body.over-dark .altimeter .tick{background:rgba(244,241,234,.3)}
+  body.over-dark .altimeter .tick.on{background:var(--bone)}
+  body.over-dark .altimeter .alt-val{color:var(--bone)}
+  body.over-dark .altimeter .alt-unit{color:rgba(244,241,234,.55)}
+  body.over-dark .cursor{border-color:rgba(244,241,234,.5)}
+  body.over-dark .cursor-dot{background:var(--bone)}
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .mask>span{transform:none;transition:none}
+    #eagleSvg{transform:none;animation:none}
+    #eagleSvg path{fill:var(--ink-900);stroke:none;stroke-dashoffset:0;transition:none}
+    .scrollcue .line::after{animation:none}
+    .cursor,.cursor-dot{display:none}
+    body{cursor:auto}
+  }
+</style>
+</head>
+<body>
+
+<!-- grain -->
+<svg class="grain" xmlns="http://www.w3.org/2000/svg">
+  <filter id="grainf"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>
+  <rect width="100%" height="100%" filter="url(#grainf)"/>
+</svg>
+
+<!-- cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- header -->
+<header class="site">
+  <a href="#top" class="brandmark" aria-label="ZERATTA — início" data-cursor>
+    <svg class="brand-logo" viewBox="0 0 2000 2000" aria-hidden="true">
+      <path d="M1187.28,827.64c44.8-12.78,79.62-26.33,102.12-35.81,19.22-8.09,93.18-40.04,165.77-68.96,23.4-9.32,48.19-18.8,72.94-9.28,19.41,7.47,21.93,18.27,42.44,27.85,30.65,14.32,50.71.43,83.37,2.02,68.04,3.32,116.77,70.1,113.58,74.9-2.14,3.22-29.92-18.09-79.72-18.09h0c-22.83,7.15-41.29,16.94-56.22,27.37-132.14,92.29-104.12,315.48-100.79,339.5-16.68-20.12-36.8-50.12-49.07-90.18-20.39-66.59-12.1-167.99,30.5-225.45,3.3-4.46,9.02-11.61,6.63-15.91-8.48-15.32-106.12,16.18-176.38,53.05-41.21,21.62-98.46,58.45-156.49,122.01.42-15.63,3-38.43,13.26-63.66,17.26-42.42,46.35-67.32,61-78.24-24.31-13.7-48.63-27.41-72.94-41.11Z"/>
+      <path d="M677.6,1909.59c37.09-17.77,96.8-46.02,171.08-79.57,166.49-75.2,247.68-105.4,344.08-170.1,37.19-24.96,92.8-65.9,145.22-133.09,0,0,12.53-16.47,25.26-34.98,74.96-108.98,107.26-217.29,122.01-294.41,6.27,34.94,12.3,89.8,2.65,155.16-27.21,184.26-155.71,293.94-188.32,320.94-20.79,17.21-65.08,51.23-232.08,115.38-93.36,35.86-225.24,81.21-389.9,120.68Z"/>
+      <path d="M396.69,90.41c8.24,53.12,23.71,127.98,55.15,213.4,16.78,45.59,83.63,217.9,295.86,444.03,107.86,114.92,286.93,279.61,553.53,424.46-22.11-1.6-41.87-3.51-59.3-5.54-26.87-3.13-48.19-6.52-63.99-9.44-22.67-4.19-48.44-14.59-62.85-22.22-395.18-209.23-517.98-367.55-517.98-367.55-159.53-212.43-190.42-478.45-197.16-564.34-3.67-46.8-3.81-85.86-3.25-112.8Z"/>
+      <path d="M235.66,946.34c5.41-6.57,82.05,52.3,148.53,96.37,47.32,31.37,91.68,58.14,138.95,82.69,142.51,74.03,265.62,111.71,351.74,135.69,67.88,18.9,110.84,30.65,173.29,38.02,86.34,10.18,159.26,5.99,210.42,0-60.35,36.51-113.76,49.21-146.77,54.29-50.23,7.73-91.85,3.77-135.26-.36-41.11-3.91-71.77-10.29-112.28-18.57-22.51-4.6-64.91-13.79-118.47-29.18-100.46-28.85-173.17-56.95-251.09-94.6-89.93-43.46-135.37-65.99-158.26-105.21-12.61-21.61-18.86-41.2-44.21-82.22-31.41-50.84-59.89-72.91-56.58-76.92Z"/>
+      <path d="M232.97,518.44c7.97-6.63,76.26,86.1,137.55,157.96,43.62,51.15,85.29,95.85,130.86,138.6,137.38,128.91,263.76,208.02,352.87,260.43,46.39,27.28,102.52,59.24,182.3,92.89,89.04,37.56,168.06,60.16,228,74.19-31.33,4.25-58.3,6.26-79.47,7.24,0,0-63.74,2.95-105.93-4.11-.34-.06-5.01-.85-5.01-.84,0,0,5.01.86,5.01.84.02-.09-67.12-4.25-138.37-30.17-25.68-9.35-55.71-22.93-74.83-31.54-13.86-6.25-28.85-13.25-45.08-21.2-23.78-11.65-68.41-34.25-123.7-67.42-103.69-62.22-176.62-116.11-252.56-183.13-87.65-77.36-131.76-117.14-145.81-171.41-7.74-29.9-8.97-55.63-25.23-112.77-20.15-70.82-45.47-105.51-40.61-109.55Z"/>
+      <path d="M335.56,1185.94c5.15-6.66,61.16,37.13,143.23,80.46,168.86,89.15,324.58,111.18,412.89,122.89,75.24,9.98,176.86,17.11,297.07,7.07-12.3,8.5-30.55,20.03-53.93,30.94-40.97,19.13-111.09,42.62-251.09,29.18-85.91-8.25-242.77-23.31-398.74-129.08-86.45-58.63-155.55-133.54-149.42-141.46Z"/>
+      <path d="M506.2,1403.44c93.62,38.67,175.8,62.85,239.3,78.39,140.16,34.3,222.36,34.58,250.5,34.19,18.22-.26,33.31-1.08,43.62-1.77,5.81-.39,9.55-.79,20.63-1.77,17.25-1.52,31.12-2.66,40.08-3.39-29.5,15.23-72.43,33.55-126.72,44.35-15.61,3.11-65.83,12.3-131.98,7.73-91.12-6.3-154.55-34.71-206.87-58.14-63.92-28.63-96.09-53.97-119.5-86.11-4.16-5.71-7.25-10.55-9.06-13.48Z"/>
+      <path d="M661.41,1580.2c40.79,14.01,94.44,27.98,158.31,33.33,90.26,7.57,165.45-5.03,216.53-17.96-20.14,12.35-48.94,27.78-85.53,40.45-28.66,9.92-54.71,18.94-89.68,20.46-69.52,3.03-122.52-25.8-147.42-39.76-23.31-13.06-40.81-26.73-52.21-36.53Z"/>
+      <path d="M752.05,1686.97c18.79,6.45,43.5,12.89,72.92,15.35,41.57,3.49,76.21-2.32,99.74-8.27-9.28,5.69-22.54,12.8-39.4,18.63-13.2,4.57-25.2,8.72-41.31,9.43-32.02,1.4-56.44-11.89-67.91-18.31-10.74-6.02-18.8-12.31-24.05-16.83Z"/>
+    </svg>
+  </a>
+  <nav class="lang" aria-label="Idioma">
+    <button data-lang="pt-BR" class="active" data-cursor>PT<span class="u"></span></button>
+    <span class="sep">/</span>
+    <button data-lang="en-US" data-cursor>EN<span class="u"></span></button>
+  </nav>
+</header>
+
+<!-- altimeter -->
+<div class="altimeter" id="altimeter" aria-hidden="true">
+  <div class="track"></div>
+  <div class="fill" id="altFill"></div>
+  <div class="readout">
+    <div class="alt-val" id="altVal">0</div>
+    <div class="alt-unit" data-i18n="alt.unit">metros</div>
+  </div>
+</div>
+
+<main id="top">
+
+  <!-- 01 · HERO -->
+  <section class="hero" id="s-hero">
+    <canvas id="dust"></canvas>
+    <div class="atmos"></div>
+    <div class="vignette"></div>
+    <div class="inner">
+      <span class="eyebrow reveal" data-i18n="hero.eyebrow">Pré-lançamento</span>
+      <h1 class="wordmark mask"><span>ZERATTA</span></h1>
+      <p class="tagline reveal" data-i18n="hero.tagline">A excelência não nasce pronta.<br>Ela é construída.</p>
+      <a class="cta reveal" id="ctaHero" href="mailto:contato@zeratta.com?subject=Quero%20ser%20avisado%20no%20lan%C3%A7amento%20ZERATTA" data-cursor>
+        <span data-i18n="hero.cta">Seja avisado no lançamento</span>
+        <span class="ar">→</span>
+        <span class="ln"></span>
+      </a>
+    </div>
+    <div class="scrollcue">
+      <span class="num">01</span>
+      <span class="line"></span>
+      <span class="txt" data-i18n="hero.scroll">role para subir</span>
+    </div>
+  </section>
+
+  <!-- 02 · BRAND STATEMENT -->
+  <section class="section statement" id="s-statement">
+    <div class="wrap grid">
+      <div>
+        <span class="eyebrow reveal" data-i18n="phil.eyebrow">Filosofia</span>
+        <p class="lede reveal" style="margin-top:1.6rem" data-i18n="phil.lede">O alto não se alcança por acaso. Alcança-se <em>por decisão</em>.</p>
+      </div>
+      <div class="col-b">
+        <p class="body reveal" data-i18n="phil.p1">ZERATTA nasce de uma convicção simples: cada detalhe é uma escolha, e cada escolha, um passo acima. Não perseguimos o brilho fácil. Perseguimos a permanência.</p>
+        <p class="body reveal" data-i18n="phil.p2">É o tipo de presença que dispensa anúncio. Quem reconhece, reconhece de longe.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · THE EAGLE -->
+  <section class="section eagle" id="s-eagle">
+    <div class="halo"></div>
+    <div class="wrap">
+      <span class="eyebrow reveal" data-i18n="eagle.eyebrow">O símbolo</span>
+      <svg viewBox="0 0 2000 2000" role="img" aria-label="Símbolo ZERATTA — a águia" id="eagleSvg">
+        <path d="M1187.28,827.64c44.8-12.78,79.62-26.33,102.12-35.81,19.22-8.09,93.18-40.04,165.77-68.96,23.4-9.32,48.19-18.8,72.94-9.28,19.41,7.47,21.93,18.27,42.44,27.85,30.65,14.32,50.71.43,83.37,2.02,68.04,3.32,116.77,70.1,113.58,74.9-2.14,3.22-29.92-18.09-79.72-18.09h0c-22.83,7.15-41.29,16.94-56.22,27.37-132.14,92.29-104.12,315.48-100.79,339.5-16.68-20.12-36.8-50.12-49.07-90.18-20.39-66.59-12.1-167.99,30.5-225.45,3.3-4.46,9.02-11.61,6.63-15.91-8.48-15.32-106.12,16.18-176.38,53.05-41.21,21.62-98.46,58.45-156.49,122.01.42-15.63,3-38.43,13.26-63.66,17.26-42.42,46.35-67.32,61-78.24-24.31-13.7-48.63-27.41-72.94-41.11Z"/>
+        <path d="M677.6,1909.59c37.09-17.77,96.8-46.02,171.08-79.57,166.49-75.2,247.68-105.4,344.08-170.1,37.19-24.96,92.8-65.9,145.22-133.09,0,0,12.53-16.47,25.26-34.98,74.96-108.98,107.26-217.29,122.01-294.41,6.27,34.94,12.3,89.8,2.65,155.16-27.21,184.26-155.71,293.94-188.32,320.94-20.79,17.21-65.08,51.23-232.08,115.38-93.36,35.86-225.24,81.21-389.9,120.68Z"/>
+        <path d="M396.69,90.41c8.24,53.12,23.71,127.98,55.15,213.4,16.78,45.59,83.63,217.9,295.86,444.03,107.86,114.92,286.93,279.61,553.53,424.46-22.11-1.6-41.87-3.51-59.3-5.54-26.87-3.13-48.19-6.52-63.99-9.44-22.67-4.19-48.44-14.59-62.85-22.22-395.18-209.23-517.98-367.55-517.98-367.55-159.53-212.43-190.42-478.45-197.16-564.34-3.67-46.8-3.81-85.86-3.25-112.8Z"/>
+        <path d="M235.66,946.34c5.41-6.57,82.05,52.3,148.53,96.37,47.32,31.37,91.68,58.14,138.95,82.69,142.51,74.03,265.62,111.71,351.74,135.69,67.88,18.9,110.84,30.65,173.29,38.02,86.34,10.18,159.26,5.99,210.42,0-60.35,36.51-113.76,49.21-146.77,54.29-50.23,7.73-91.85,3.77-135.26-.36-41.11-3.91-71.77-10.29-112.28-18.57-22.51-4.6-64.91-13.79-118.47-29.18-100.46-28.85-173.17-56.95-251.09-94.6-89.93-43.46-135.37-65.99-158.26-105.21-12.61-21.61-18.86-41.2-44.21-82.22-31.41-50.84-59.89-72.91-56.58-76.92Z"/>
+        <path d="M232.97,518.44c7.97-6.63,76.26,86.1,137.55,157.96,43.62,51.15,85.29,95.85,130.86,138.6,137.38,128.91,263.76,208.02,352.87,260.43,46.39,27.28,102.52,59.24,182.3,92.89,89.04,37.56,168.06,60.16,228,74.19-31.33,4.25-58.3,6.26-79.47,7.24,0,0-63.74,2.95-105.93-4.11-.34-.06-5.01-.85-5.01-.84,0,0,5.01.86,5.01.84.02-.09-67.12-4.25-138.37-30.17-25.68-9.35-55.71-22.93-74.83-31.54-13.86-6.25-28.85-13.25-45.08-21.2-23.78-11.65-68.41-34.25-123.7-67.42-103.69-62.22-176.62-116.11-252.56-183.13-87.65-77.36-131.76-117.14-145.81-171.41-7.74-29.9-8.97-55.63-25.23-112.77-20.15-70.82-45.47-105.51-40.61-109.55Z"/>
+        <path d="M335.56,1185.94c5.15-6.66,61.16,37.13,143.23,80.46,168.86,89.15,324.58,111.18,412.89,122.89,75.24,9.98,176.86,17.11,297.07,7.07-12.3,8.5-30.55,20.03-53.93,30.94-40.97,19.13-111.09,42.62-251.09,29.18-85.91-8.25-242.77-23.31-398.74-129.08-86.45-58.63-155.55-133.54-149.42-141.46Z"/>
+        <path d="M506.2,1403.44c93.62,38.67,175.8,62.85,239.3,78.39,140.16,34.3,222.36,34.58,250.5,34.19,18.22-.26,33.31-1.08,43.62-1.77,5.81-.39,9.55-.79,20.63-1.77,17.25-1.52,31.12-2.66,40.08-3.39-29.5,15.23-72.43,33.55-126.72,44.35-15.61,3.11-65.83,12.3-131.98,7.73-91.12-6.3-154.55-34.71-206.87-58.14-63.92-28.63-96.09-53.97-119.5-86.11-4.16-5.71-7.25-10.55-9.06-13.48Z"/>
+        <path d="M661.41,1580.2c40.79,14.01,94.44,27.98,158.31,33.33,90.26,7.57,165.45-5.03,216.53-17.96-20.14,12.35-48.94,27.78-85.53,40.45-28.66,9.92-54.71,18.94-89.68,20.46-69.52,3.03-122.52-25.8-147.42-39.76-23.31-13.06-40.81-26.73-52.21-36.53Z"/>
+        <path d="M752.05,1686.97c18.79,6.45,43.5,12.89,72.92,15.35,41.57,3.49,76.21-2.32,99.74-8.27-9.28,5.69-22.54,12.8-39.4,18.63-13.2,4.57-25.2,8.72-41.31,9.43-32.02,1.4-56.44-11.89-67.91-18.31-10.74-6.02-18.8-12.31-24.05-16.83Z"/>
+      </svg>
+      <p class="lead reveal" data-i18n="eagle.lead">A águia não voa para ser vista. Voa porque o alto é o seu lugar.</p>
+      <div class="traits">
+        <div class="trait reveal"><div class="t-n">I</div><div class="t-t" data-i18n="eagle.t1">Visão</div><div class="t-d" data-i18n="eagle.d1">Enxergar longe, antes dos outros.</div></div>
+        <div class="trait reveal"><div class="t-n">II</div><div class="t-t" data-i18n="eagle.t2">Liberdade</div><div class="t-d" data-i18n="eagle.d2">Nenhuma corrente alcança o céu.</div></div>
+        <div class="trait reveal"><div class="t-n">III</div><div class="t-t" data-i18n="eagle.t3">Altitude</div><div class="t-d" data-i18n="eagle.d3">O ar é mais raro onde poucos chegam.</div></div>
+        <div class="trait reveal"><div class="t-n">IV</div><div class="t-t" data-i18n="eagle.t4">Precisão</div><div class="t-d" data-i18n="eagle.d4">Um único movimento, exato.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · THE JOURNEY -->
+  <section class="section journey" id="s-journey">
+    <div class="wrap">
+      <span class="eyebrow reveal" data-i18n="journey.eyebrow">O percurso</span>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="s-alt">340 m<small data-i18n="alt.short">altitude</small></div>
+          <div class="s-main"><span class="s-i">01</span><span class="s-t" data-i18n="journey.t1">Conceito</span><span class="s-d" data-i18n="journey.d1">Onde a ideia ganha forma e a marca encontra a sua razão.</span></div>
+        </div>
+        <div class="step reveal">
+          <div class="s-alt">1 200 m<small data-i18n="alt.short">altitude</small></div>
+          <div class="s-main"><span class="s-i">02</span><span class="s-t" data-i18n="journey.t2">Criação</span><span class="s-d" data-i18n="journey.d2">O desenho de cada detalhe, sem pressa e sem ruído.</span></div>
+        </div>
+        <div class="step reveal">
+          <div class="s-alt">3 400 m<small data-i18n="alt.short">altitude</small></div>
+          <div class="s-main"><span class="s-i">03</span><span class="s-t" data-i18n="journey.t3">Desenvolvimento</span><span class="s-d" data-i18n="journey.d3">Da matéria ao acabamento. O rigor que não se vê, mas se sente.</span></div>
+        </div>
+        <div class="step reveal">
+          <div class="s-alt">∞<small data-i18n="alt.short">altitude</small></div>
+          <div class="s-main"><span class="s-i">04</span><span class="s-t" data-i18n="journey.t4">Lançamento</span><span class="s-d" data-i18n="journey.d4">Em breve, à vista de todos.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · GALLERY -->
+  <section class="section gallery" id="s-gallery">
+    <div class="wrap">
+      <div class="head">
+        <p class="lede reveal" data-i18n="gallery.lede">O universo ZERATTA, em fragmentos.</p>
+        <span class="eyebrow reveal" data-i18n="gallery.eyebrow">Fragmentos</span>
+      </div>
+      <div class="gal-grid">
+        <button class="g-item reveal" data-full="images/gallery/g02.webp" aria-label="Ampliar imagem"><img src="images/gallery/g02.webp" loading="lazy" decoding="async" alt="ZERATTA — o homem"><span class="g-cap" data-i18n="gc1">O homem</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g07.webp" aria-label="Ampliar imagem"><img src="images/gallery/g07.webp" loading="lazy" decoding="async" alt="ZERATTA — a altitude"><span class="g-cap" data-i18n="gc2">A altitude</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g01.webp" aria-label="Ampliar imagem"><img src="images/gallery/g01.webp" loading="lazy" decoding="async" alt="ZERATTA — o ofício"><span class="g-cap" data-i18n="gc3">O ofício</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g05.webp" aria-label="Ampliar imagem"><img src="images/gallery/g05.webp" loading="lazy" decoding="async" alt="ZERATTA — o convite"><span class="g-cap" data-i18n="gc4">O convite</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g08.webp" aria-label="Ampliar imagem"><img src="images/gallery/g08.webp" loading="lazy" decoding="async" alt="ZERATTA — o voo"><span class="g-cap" data-i18n="gc5">O voo</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g03.webp" aria-label="Ampliar imagem"><img src="images/gallery/g03.webp" loading="lazy" decoding="async" alt="ZERATTA — o ritual"><span class="g-cap" data-i18n="gc6">O ritual</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g10.webp" aria-label="Ampliar imagem"><img src="images/gallery/g10.webp" loading="lazy" decoding="async" alt="ZERATTA — o presente"><span class="g-cap" data-i18n="gc7">O presente</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g06.webp" aria-label="Ampliar imagem"><img src="images/gallery/g06.webp" loading="lazy" decoding="async" alt="ZERATTA — o traje"><span class="g-cap" data-i18n="gc8">O traje</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g09.webp" aria-label="Ampliar imagem"><img src="images/gallery/g09.webp" loading="lazy" decoding="async" alt="ZERATTA — a coleção"><span class="g-cap" data-i18n="gc9">A coleção</span></button>
+        <button class="g-item reveal" data-full="images/gallery/g04.webp" aria-label="Ampliar imagem"><img src="images/gallery/g04.webp" loading="lazy" decoding="async" alt="ZERATTA — a gala"><span class="g-cap" data-i18n="gc10">A gala</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · COMING SOON -->
+  <section class="section coming" id="s-coming">
+    <div class="atmos"></div>
+    <div class="wrap">
+      <span class="eyebrow reveal" style="justify-content:center" data-i18n="coming.eyebrow">Em breve</span>
+      <p class="lede reveal" style="margin-top:1.8rem" data-i18n="coming.lede">Estamos preparando algo extraordinário.</p>
+      <p class="sub reveal" data-i18n="coming.sub">O lançamento se aproxima.</p>
+      <a class="cta reveal" style="margin-top:2.8rem" href="mailto:contato@zeratta.com?subject=Quero%20ser%20avisado%20no%20lan%C3%A7amento%20ZERATTA" data-cursor>
+        <span data-i18n="coming.cta">Seja avisado no lançamento</span>
+        <span class="ar">→</span>
+        <span class="ln"></span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<!-- footer -->
+<footer class="site">
+  <div class="foot-grid">
+    <div>
+      <div class="foot-mark">ZERATTA</div>
+      <div class="foot-tag" data-i18n="footer.tag">Voe alto.</div>
+    </div>
+    <div class="foot-links">
+      <a href="https://instagram.com/zeratta" target="_blank" rel="noopener" data-cursor>Instagram</a>
+      <a href="mailto:contato@zeratta.com" data-cursor>contato@zeratta.com</a>
+    </div>
+  </div>
+  <div class="foot-base">
+    <span data-i18n="footer.rights">© 2026 ZERATTA. Todos os direitos reservados.</span>
+    <span data-i18n="footer.place">Construído nas alturas</span>
+  </div>
+</footer>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-label="Galeria">
+  <button class="lb-close" id="lbClose" aria-label="Fechar" data-cursor>&times;</button>
+  <button class="lb-nav lb-prev" id="lbPrev" aria-label="Imagem anterior" data-cursor>&lsaquo;</button>
+  <img class="lb-img" id="lbImg" alt="" />
+  <button class="lb-nav lb-next" id="lbNext" aria-label="Próxima imagem" data-cursor>&rsaquo;</button>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var coarse = window.matchMedia("(pointer: coarse)").matches;
+
+  /* ---------- i18n ---------- */
+  var dict = {
+    "pt-BR":{
+      "alt.unit":"metros","alt.short":"altitude",
+      "hero.eyebrow":"Pré-lançamento",
+      "hero.tagline":"A excelência não nasce pronta.<br>Ela é construída.",
+      "hero.cta":"Seja avisado no lançamento","hero.scroll":"role para subir",
+      "phil.eyebrow":"Filosofia",
+      "phil.lede":"O alto não se alcança por acaso. Alcança-se <em>por decisão</em>.",
+      "phil.p1":"ZERATTA nasce de uma convicção simples: cada detalhe é uma escolha, e cada escolha, um passo acima. Não perseguimos o brilho fácil. Perseguimos a permanência.",
+      "phil.p2":"É o tipo de presença que dispensa anúncio. Quem reconhece, reconhece de longe.",
+      "eagle.eyebrow":"O símbolo",
+      "eagle.lead":"A águia não voa para ser vista. Voa porque o alto é o seu lugar.",
+      "eagle.t1":"Visão","eagle.d1":"Enxergar longe, antes dos outros.",
+      "eagle.t2":"Liberdade","eagle.d2":"Nenhuma corrente alcança o céu.",
+      "eagle.t3":"Altitude","eagle.d3":"O ar é mais raro onde poucos chegam.",
+      "eagle.t4":"Precisão","eagle.d4":"Um único movimento, exato.",
+      "journey.eyebrow":"O percurso",
+      "journey.t1":"Conceito","journey.d1":"Onde a ideia ganha forma e a marca encontra a sua razão.",
+      "journey.t2":"Criação","journey.d2":"O desenho de cada detalhe, sem pressa e sem ruído.",
+      "journey.t3":"Desenvolvimento","journey.d3":"Da matéria ao acabamento. O rigor que não se vê, mas se sente.",
+      "journey.t4":"Lançamento","journey.d4":"Em breve, à vista de todos.",
+      "gallery.eyebrow":"Fragmentos","gallery.lede":"O universo ZERATTA, em fragmentos.",
+      "gc1":"O homem","gc2":"A altitude","gc3":"O ofício","gc4":"O convite","gc5":"O voo","gc6":"O ritual","gc7":"O presente","gc8":"O traje","gc9":"A coleção","gc10":"A gala",
+      "coming.eyebrow":"Em breve","coming.lede":"Estamos preparando algo extraordinário.",
+      "coming.sub":"O lançamento se aproxima.","coming.cta":"Seja avisado no lançamento",
+      "footer.tag":"Voe alto.","footer.rights":"© 2026 ZERATTA. Todos os direitos reservados.",
+      "footer.place":"Construído nas alturas"
+    },
+    "en-US":{
+      "alt.unit":"meters","alt.short":"altitude",
+      "hero.eyebrow":"Pre-launch",
+      "hero.tagline":"Excellence is never accidental.<br>It is built.",
+      "hero.cta":"Be notified at launch","hero.scroll":"scroll to ascend",
+      "phil.eyebrow":"Philosophy",
+      "phil.lede":"Altitude is never reached by chance. It is reached <em>by decision</em>.",
+      "phil.p1":"ZERATTA begins from a simple conviction: every detail is a choice, and every choice a step higher. We do not chase easy shine. We pursue permanence.",
+      "phil.p2":"It is the kind of presence that needs no announcement. Those who recognize it, recognize it from afar.",
+      "eagle.eyebrow":"The symbol",
+      "eagle.lead":"The eagle does not fly to be seen. It flies because the heights are where it belongs.",
+      "eagle.t1":"Vision","eagle.d1":"To see far, before others do.",
+      "eagle.t2":"Freedom","eagle.d2":"No chain ever reaches the sky.",
+      "eagle.t3":"Altitude","eagle.d3":"The air is rarer where few arrive.",
+      "eagle.t4":"Precision","eagle.d4":"A single, exact movement.",
+      "journey.eyebrow":"The journey",
+      "journey.t1":"Concept","journey.d1":"Where the idea takes form and the brand finds its reason.",
+      "journey.t2":"Creation","journey.d2":"The drawing of every detail, without haste or noise.",
+      "journey.t3":"Development","journey.d3":"From matter to finish. The rigor you don't see, but feel.",
+      "journey.t4":"Launch","journey.d4":"Soon, in full view.",
+      "gallery.eyebrow":"Fragments","gallery.lede":"The ZERATTA universe, in fragments.",
+      "gc1":"The man","gc2":"The altitude","gc3":"The craft","gc4":"The invitation","gc5":"The flight","gc6":"The ritual","gc7":"The gift","gc8":"The attire","gc9":"The collection","gc10":"The gala",
+      "coming.eyebrow":"Coming soon","coming.lede":"We are preparing something extraordinary.",
+      "coming.sub":"The launch approaches.","coming.cta":"Be notified at launch",
+      "footer.tag":"Fly high.","footer.rights":"© 2026 ZERATTA. All rights reserved.",
+      "footer.place":"Built at altitude"
+    }
+  };
+
+  function applyLang(lang){
+    var d = dict[lang]; if(!d) return;
+    document.documentElement.setAttribute("lang", lang);
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      var k = el.getAttribute("data-i18n");
+      if(d[k] != null) el.innerHTML = d[k];
+    });
+    document.querySelectorAll(".lang button").forEach(function(b){
+      b.classList.toggle("active", b.getAttribute("data-lang") === lang);
+    });
+    try{ localStorage.setItem("zeratta-lang", lang); }catch(e){}
+  }
+  document.querySelectorAll(".lang button").forEach(function(b){
+    b.addEventListener("click", function(){ applyLang(b.getAttribute("data-lang")); });
+  });
+  var saved = "pt-BR";
+  try{ saved = localStorage.getItem("zeratta-lang") || "pt-BR"; }catch(e){}
+  applyLang(saved);
+
+  /* ---------- Reveal ---------- */
+  var revealEls = document.querySelectorAll(".reveal, .mask");
+  if(reduce){
+    revealEls.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, {threshold:0.18, rootMargin:"0px 0px -8% 0px"});
+    revealEls.forEach(function(el){ io.observe(el); });
+    // hero masks/reveals show immediately on load
+    window.addEventListener("load", function(){
+      document.querySelectorAll("#s-hero .reveal, #s-hero .mask").forEach(function(el){
+        setTimeout(function(){ el.classList.add("in"); }, 120);
+      });
+    });
+  }
+
+  /* ---------- Eagle draw-on ---------- */
+  var eagle = document.getElementById("s-eagle");
+  if(reduce){ eagle.classList.add("in"); }
+  else{
+    var epaths = eagle.querySelectorAll("#eagleSvg path");
+    var STAG = 0.14, DRAW = 1.8;
+    var fillDelay = (epaths.length * STAG) + DRAW * 0.5; // fill begins as the outline wraps up
+    epaths.forEach(function(p,i){
+      var len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;          // outline hidden initially
+      p.style.transition = "stroke-dashoffset "+DRAW+"s cubic-bezier(0.22,1,0.36,1), fill 1s ease";
+      // two delays map positionally to: [stroke-dashoffset, fill]
+      p.style.transitionDelay = (i*STAG).toFixed(2)+"s, "+ fillDelay.toFixed(2)+"s";
+    });
+    var eio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          eagle.classList.add("in");
+          epaths.forEach(function(p){ p.style.strokeDashoffset = 0; }); // draw
+          eio.disconnect();
+        }
+      });
+    }, {threshold:0.3});
+    eio.observe(eagle);
+  }
+
+  /* ---------- Altimeter ---------- */
+  var altVal = document.getElementById("altVal");
+  var altFill = document.getElementById("altFill");
+  var darkSec = document.getElementById("s-coming");
+  var MAXALT = 12000;
+  function fmt(n){ return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " "); }
+  var ticking = false;
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? Math.min(1, Math.max(0, h.scrollTop / max)) : 0;
+    altVal.textContent = fmt(p*MAXALT);
+    var trackH = window.innerHeight * 0.68;
+    altFill.style.height = (p*trackH) + "px";
+    if(darkSec){
+      var r = darkSec.getBoundingClientRect();
+      var H = window.innerHeight;
+      // altimeter/cursor invert when the dark block owns the viewport centre
+      document.body.classList.toggle("over-dark", r.top <= H*0.5 && r.bottom >= H*0.5);
+      // header inverts only if the dark block ever reaches the top strip
+      document.body.classList.toggle("over-dark-head", r.top <= 52 && r.bottom >= 52);
+    }
+    ticking = false;
+  }
+  window.addEventListener("scroll", function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(onScroll); }
+  }, {passive:true});
+  onScroll();
+
+  /* ---------- Custom cursor ---------- */
+  if(!reduce && !coarse){
+    var cur = document.getElementById("cursor");
+    var dot = document.getElementById("cursorDot");
+    var mx=window.innerWidth/2, my=window.innerHeight/2, cx=mx, cy=my;
+    document.addEventListener("mousemove", function(e){
+      mx=e.clientX; my=e.clientY;
+      dot.style.transform = "translate("+(mx)+"px,"+(my)+"px) translate(-50%,-50%)";
+    });
+    function loop(){
+      cx += (mx-cx)*0.16; cy += (my-cy)*0.16;
+      cur.style.transform = "translate("+cx+"px,"+cy+"px) translate(-50%,-50%)";
+      requestAnimationFrame(loop);
+    }
+    loop();
+    document.querySelectorAll("a, button, [data-cursor]").forEach(function(el){
+      el.addEventListener("mouseenter", function(){ cur.classList.add("is-hover"); });
+      el.addEventListener("mouseleave", function(){ cur.classList.remove("is-hover"); });
+    });
+  }
+
+  /* ---------- Hero dust particles ---------- */
+  if(!reduce){
+    var cv = document.getElementById("dust");
+    var ctx = cv.getContext("2d");
+    var hero = document.getElementById("s-hero");
+    var dpr = Math.min(window.devicePixelRatio||1, 2);
+    var W,H,parts=[],visible=true;
+    function size(){
+      W = hero.clientWidth; H = hero.clientHeight;
+      cv.width = W*dpr; cv.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    function seed(){
+      var n = Math.max(28, Math.min(64, Math.floor(W/26)));
+      parts = [];
+      for(var i=0;i<n;i++){
+        parts.push({
+          x:Math.random()*W, y:Math.random()*H,
+          r:Math.random()*1.4+0.3,
+          vx:(Math.random()-0.5)*0.12, vy:(Math.random()-0.5)*0.12 - 0.04,
+          a:Math.random()*0.18+0.05
+        });
+      }
+    }
+    function draw(){
+      if(!visible){ requestAnimationFrame(draw); return; }
+      ctx.clearRect(0,0,W,H);
+      for(var i=0;i<parts.length;i++){
+        var p=parts[i];
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+        if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
+        ctx.beginPath();
+        ctx.fillStyle="rgba(14,14,14,"+p.a+")";
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    size(); seed(); draw();
+    window.addEventListener("resize", function(){ size(); seed(); });
+    var hio = new IntersectionObserver(function(es){
+      es.forEach(function(e){ visible = e.isIntersecting; });
+    }, {threshold:0.01});
+    hio.observe(hero);
+  }
+
+  /* ---------- Lightbox ---------- */
+  (function(){
+    var items = Array.prototype.slice.call(document.querySelectorAll(".g-item"));
+    if(!items.length) return;
+    var lb = document.getElementById("lightbox");
+    var lbImg = document.getElementById("lbImg");
+    var idx = 0;
+    function show(i){
+      idx = (i + items.length) % items.length;
+      lbImg.src = items[idx].getAttribute("data-full");
+      var im = items[idx].querySelector("img");
+      lbImg.alt = im ? im.alt : "";
+    }
+    function open(i){ show(i); lb.classList.add("open"); lb.setAttribute("aria-hidden","false"); document.body.style.overflow="hidden"; }
+    function close(){ lb.classList.remove("open"); lb.setAttribute("aria-hidden","true"); document.body.style.overflow=""; }
+    items.forEach(function(it,i){ it.addEventListener("click", function(){ open(i); }); });
+    document.getElementById("lbClose").addEventListener("click", close);
+    document.getElementById("lbPrev").addEventListener("click", function(e){ e.stopPropagation(); show(idx-1); });
+    document.getElementById("lbNext").addEventListener("click", function(e){ e.stopPropagation(); show(idx+1); });
+    lb.addEventListener("click", function(e){ if(e.target === lb) close(); });
+    document.addEventListener("keydown", function(e){
+      if(!lb.classList.contains("open")) return;
+      if(e.key === "Escape") close();
+      else if(e.key === "ArrowLeft") show(idx-1);
+      else if(e.key === "ArrowRight") show(idx+1);
+    });
+  })();
+})();
+</script>
+</body>
+</html>

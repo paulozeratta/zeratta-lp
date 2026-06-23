@@ -1,0 +1,20 @@
+# Vendored skills marketplace (own git repo, large)
+/skills/
+
+# Internal design docs / specs
+/docs/
+
+# Local working copy (deployed file is index.html)
+/preview.html
+
+# Large source images — only optimized images/gallery/* are served
+/images/*.webp
+
+# Source logo artboards (already inlined into index.html)
+/Prancheta 1.svg
+/ÁGUIA ZERATTA SVG.svg
+/ESCRITA ZERATTA SVG.svg
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store
